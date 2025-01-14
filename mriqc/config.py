@@ -619,7 +619,12 @@ class workflow(_Config):
     """Subject species to choose most appropriate template"""
     template_id: str = 'MNI152NLin2009cAsym'
     """TemplateFlow ID of template used for the anatomical processing."""
-
+    mni_resolution = 2
+    """Manual headmask"""
+    hmask_MNI =f'{os.getcwd()}/mriqc/templates/headmask_MNI.nii.gz'
+    """Manual headmask"""
+    hmask_manual =f'{os.getcwd()}/mriqc/templates/headmask_native.nii.gz'
+    """Manual headmask"""
     _hidden: tuple[str, ...] = ('inputs', 'inputs_entities', 'inputs_metadata')
 
     @classmethod
