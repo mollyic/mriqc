@@ -71,3 +71,6 @@ target/
 
 # Run files
 work/
+
+#Nifti files
+mriqc/templates
