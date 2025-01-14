@@ -33,11 +33,24 @@
     :show-inheritance:
 
 """
-
+from mriqc.workflows.anatomical.ants_atropos import init_atropos_wf
 from mriqc.workflows.anatomical.base import anat_qc_workflow
 from mriqc.workflows.functional.base import fmri_qc_workflow
+from mriqc.workflows.utils import (
+    _get_mod,
+    _select_tissue,
+    _select_wm,
+    generate_filename,
+    percentile_enhanced,
+)
 
 __all__ = [
+    'init_atropos_wf',
+    '_get_mod',
+    '_select_wm',
+    '_select_tissue',
+    'generate_filename',
+    'percentile_enhanced',
     'anat_qc_workflow',
     'fmri_qc_workflow',
 ]
