@@ -139,7 +139,7 @@ if not any(
     os.environ['PYTHONWARNINGS'] = 'ignore'
 
 
-SUPPORTED_SUFFIXES: tuple[str, ...] = ('T1w', 'T2w', 'bold', 'dwi')
+SUPPORTED_SUFFIXES: tuple[str, ...] = ('T1w', 'T2w', 'FLAIR', 'bold', 'dwi')
 
 DEFAULT_MEMORY_MIN_GB: float = 0.01
 DSA_MESSAGE: str = """\
@@ -148,6 +148,17 @@ repository. \
 Submission of IQMs can be disabled using the ``--no-sub`` argument. \
 Please visit https://mriqc.readthedocs.io/en/latest/dsa.html to revise MRIQC's \
 Data Sharing Agreement."""
+
+from configparser import ConfigParser
+from collections import OrderedDict
+INI = ConfigParser()
+INI.read('config.ini')
+ATROPOS_MODELS = {
+    'T1w': OrderedDict([('csf', 1), ('gm', 2), ('wm', 3)]),
+    'T2w': OrderedDict([('csf', 3), ('gm', 2), ('wm', 1)]),
+    'FLAIR': OrderedDict([('csf', 1), ('gm', 2), ('wm', 3)])
+    }
+
 
 _exec_env: str = os.name
 _docker_ver: str | None = None
@@ -513,7 +524,7 @@ class execution(_Config):
                     r'(beh|fmap|pet|perf|meg|eeg|ieeg|micr|nirs)'
                 ),
                 # Ignore all files, except for the supported modalities
-                re.compile(r'^.+(?<!(_T1w|_T2w|bold|_dwi))\.(json|nii|nii\.gz)$'),
+                re.compile(r'^.+(?<!(_T1w|_T2w|LAIR|bold|_dwi))\.(json|nii|nii\.gz)$'),
             ]
 
             if cls.participant_label:
