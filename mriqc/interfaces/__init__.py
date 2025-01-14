@@ -56,5 +56,5 @@ __all__ = [
     'Spikes',
     'StructuralQC',
     'UploadIQMs',
-    "HeadMask_review",
+    'HeadMask_review',
 ]
