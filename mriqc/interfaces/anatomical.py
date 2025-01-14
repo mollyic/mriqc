@@ -125,8 +125,7 @@ class StructuralQC(SimpleInterface):
 
         if np.sum(segdata > 0) < 1e3:
             raise RuntimeError(
-                'Input segmentation data is likely corrupt. '
-                'MRIQC failed to process this dataset.'
+                'Input segmentation data is likely corrupt. MRIQC failed to process this dataset.'
             )
 
         # Load air, artifacts and head masks
@@ -214,6 +213,7 @@ class StructuralQC(SimpleInterface):
             stats['gm']['mad'],
         )
 
+        # FWHM
         fwhm = np.array(self.inputs.in_fwhm[:3]) / np.array(imnii.header.get_zooms()[:3])
         self._results['fwhm'] = {
             'x': float(fwhm[0]),
@@ -315,23 +315,17 @@ class ArtifactMask(SimpleInterface):
         imnii = nb.as_closest_canonical(nb.load(in_file))
         imdata = np.nan_to_num(imnii.get_fdata().astype(np.float32))
 
-        #get affine transform to MNI space
         xfm = Affine.from_filename(self.inputs.ind2std_xfm, fmt='itk')
-        #Get inverse (RAS-IJK) of imnii affine containing transformation matrix from voxel indices (IJK) to real-work spatial coordinates  
         ras2ijk = np.linalg.inv(imnii.affine)
-        #maps RAS coordinates of glabella and inion to IJK using ras2ijk transformation matrix
-        nose_ijk, inion_ijk = (apply_affine( #        glabella_ijk, inion_ijk = apply_affine(
+        nose_ijk, inion_ijk = (apply_affine(#maps RAS glabella & inion coords to IJK w ras2ijk transformation matrix
             ras2ijk, xfm.map([self.inputs.nose_xyz, self.inputs.inion_xyz])) #ras2ijk, xfm.map([self.inputs.glabella_xyz, self.inputs.inion_xyz])
         )
 
         hmdata = np.bool_(nb.load(self.inputs.head_mask).dataobj)
-        hmdata = nd.binary_dilation(hmdata, border_value=0,
-                                    structure=nd.generate_binary_structure(3, 2),iterations=1)
-
+        hmdata = nd.binary_dilation(hmdata, border_value=0, structure=nd.generate_binary_structure(3, 2),iterations=1)
         # Calculate distance to border
         dist = nd.morphology.distance_transform_edt(~hmdata)
 
-        #crop at inion and nose and invert for hat mask
         hmdata[:, :, : int(inion_ijk[2])] = 1
         hmdata[:, (hmdata.shape[1] // 2) :, : int(nose_ijk[2])] = 1 #int(glabella_ijk[2])] = 1
 
@@ -364,6 +358,7 @@ class ArtifactMask(SimpleInterface):
         )
         return runtime
 
+
 class ComputeQI2InputSpec(BaseInterfaceInputSpec):
     in_file = File(exists=True, mandatory=True, desc='File to be plotted')
     air_msk = File(exists=True, mandatory=True, desc='air (without artifacts) mask')
@@ -394,7 +389,7 @@ class ComputeQI2(SimpleInterface):
 class HarmonizeInputSpec(BaseInterfaceInputSpec):
     in_file = File(exists=True, mandatory=True, desc='input data (after bias correction)')
     wm_mask = File(exists=True, mandatory=True, desc='white-matter mask')
-    modality = traits.Str(exists=True, mandatory=True, desc="image modality")
+    modality = traits.Str(exists=True, mandatory=True, desc='image modality')
     erodemsk = traits.Bool(True, usedefault=True, desc='erode mask')
     thresh = traits.Float(0.9, usedefault=True, desc='WM probability threshold')
 
@@ -405,7 +400,7 @@ class HarmonizeOutputSpec(TraitedSpec):
 
 class Harmonize(SimpleInterface):
     """
-    Harmonize scan relative to WM median value
+    Computes the artifact mask using the method described in [Mortamet2009]_.
     """
 
     input_spec = HarmonizeInputSpec
