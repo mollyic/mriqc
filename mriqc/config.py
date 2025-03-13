@@ -153,11 +153,7 @@ from configparser import ConfigParser
 from collections import OrderedDict
 INI = ConfigParser()
 INI.read('config.ini')
-ATROPOS_MODELS = {
-    'T1w': OrderedDict([('csf', 1), ('gm', 2), ('wm', 3)]),
-    'T2w': OrderedDict([('csf', 3), ('gm', 2), ('wm', 1)]),
-    'FLAIR': OrderedDict([('csf', 1), ('gm', 2), ('wm', 3)])
-    }
+
 
 
 _exec_env: str = os.name
