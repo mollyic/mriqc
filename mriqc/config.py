@@ -149,13 +149,6 @@ Submission of IQMs can be disabled using the ``--no-sub`` argument. \
 Please visit https://mriqc.readthedocs.io/en/latest/dsa.html to revise MRIQC's \
 Data Sharing Agreement."""
 
-from configparser import ConfigParser
-from collections import OrderedDict
-INI = ConfigParser()
-INI.read('config.ini')
-
-
-
 _exec_env: str = os.name
 _docker_ver: str | None = None
 # special variable set in the container
