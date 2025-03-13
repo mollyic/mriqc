@@ -609,12 +609,11 @@ class workflow(_Config):
     template_id: str = 'MNI152NLin2009cAsym'
     """TemplateFlow ID of template used for the anatomical processing."""
     mni_resolution = 2
-    """Manual headmask"""
+    """Manual headmask resolution for transformation between MNI and native spaces."""
     hmask_MNI =f'{os.getcwd()}/mriqc/templates/headmask_MNI.nii.gz'
-    """Manual headmask"""
+    """Manual headmask nifti file"""
     hmask_manual =f'{os.getcwd()}/mriqc/templates/headmask_native.nii.gz'
-    """Manual headmask"""
-    _hidden: tuple[str, ...] = ('inputs', 'inputs_entities', 'inputs_metadata')
+    """Manual headmask in native space"""
 
     @classmethod
     def init(cls) -> None:
