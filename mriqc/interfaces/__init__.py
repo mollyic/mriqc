@@ -30,7 +30,7 @@ from mriqc.interfaces.anatomical import (
     Harmonize,
     RotationMask,
     StructuralQC,
-    HeadMask_review
+    HeadMask_review,
 )
 from mriqc.interfaces.bids import IQMFileSink
 from mriqc.interfaces.common import ConformImage, EnsureSize
