@@ -615,6 +615,8 @@ class workflow(_Config):
     hmask_manual =f'{os.getcwd()}/mriqc/templates/headmask_native.nii.gz'
     """Manual headmask in native space"""
 
+    _hidden: tuple[str, ...] = ('inputs', 'inputs_entities', 'inputs_metadata')
+
     @classmethod
     def init(cls) -> None:
         if cls.inputs_path is None:

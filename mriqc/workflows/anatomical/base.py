@@ -825,8 +825,29 @@ def _get_mod(in_file):
     extension = ''.join(in_file.suffixes)
     return in_file.name.replace(extension, '').split('_')[-1]
 
+def _select_tissue(modality, inlist):
+    max_tissue = {'T1w'     : {'tissue':'WM', 'file': 'segment_03'},
+                  'T2w'     : {'tissue':'CSF', 'file': 'segment_01'},
+                  'FLAIR'   : {'tissue':'GM', 'file': 'segment_02'}}
+
+    tissue = max_tissue[modality]['tissue']
+    return [f for f in inlist if tissue in f][0]
 
 def _pop(inlist):
     if isinstance(inlist, (list, tuple)):
         return inlist[0]
     return inlist
+
+
+def percentile_enhanced(in_arr, tissue_arr, percentile):
+    import numpy as np
+    range_max = np.percentile(in_arr[in_arr > 0], percentile)       # 99.98th percentile non-zero voxel values to identify outliers
+    excess = in_arr > range_max                                     #binary mask to identify voxels exceeding range_max
+    tissue_arr[excess] = 0                                          #voxels exceeding range_max map to zero in tissue probability to exclude outliers
+
+    tissue_mu = np.average(in_arr, weights=tissue_arr)              # Calculate weighted mean and standard deviation
+    tissue_sigma = np.sqrt(np.average((in_arr - tissue_mu) ** 2, weights=tissue_arr))
+
+    #generates new values more representative of overall intensity distribution: assigns values from a normal dist
+    in_arr[excess] = np.random.normal(loc=tissue_mu, scale=tissue_sigma, size=excess.sum())
+    return in_arr
