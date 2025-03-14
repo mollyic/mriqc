@@ -72,7 +72,6 @@ class StructuralQCInputSpec(BaseInterfaceInputSpec):
     mni_tpms = InputMultiPath(File(), desc='tissue probability maps from FSL FAST')
     in_fwhm = traits.List(traits.Float, mandatory=True, desc='smoothness estimated with AFNI')
     human = traits.Bool(True, usedefault=True, desc='human workflow')
-    hat_msk = File(exists=True, mandatory=True, desc="hat_msk")
 
 
 class StructuralQCOutputSpec(TraitedSpec):
@@ -133,7 +132,6 @@ class StructuralQC(SimpleInterface):
         artdata = np.asanyarray(nb.load(self.inputs.artifact_msk).dataobj).astype(np.uint8)
 
         headdata = np.asanyarray(nb.load(self.inputs.head_msk).dataobj).astype(np.uint8)
-        hatdata = np.asanyarray(nb.load(self.inputs.hat_msk).dataobj).astype(np.uint8)
         if np.sum(headdata > 0) < 100:
             raise RuntimeError(
                 'Detected less than 100 voxels belonging to the head mask. '
